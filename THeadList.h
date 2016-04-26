@@ -208,6 +208,5 @@ template <class T>
 T THeadList<T>::GetCurrentVal()
 {
 	if (pCurr != NULL)
-		return pCurrent->Val;
-	else return -1;
+		return pCurr->GetVal();
 }

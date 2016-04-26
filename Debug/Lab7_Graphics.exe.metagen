@@ -29,3 +29,5 @@ Class Lab7_Graphics.MyForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldIni
     Int32 y_prev : Public
     Boolean line_is_drawing : Public
     TChart* chart : Public
+    TGroup* group : Public
+    TLine* pLine : Public

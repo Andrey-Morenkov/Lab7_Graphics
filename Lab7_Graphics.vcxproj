@@ -92,6 +92,7 @@
     <ClInclude Include="TLink.h" />
     <ClInclude Include="TObject.h" />
     <ClInclude Include="TPoint.h" />
+    <ClInclude Include="TRectangle.h" />
     <ClInclude Include="TStack.h" />
   </ItemGroup>
   <ItemGroup>

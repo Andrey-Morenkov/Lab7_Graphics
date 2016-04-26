@@ -12,7 +12,7 @@ public:
 	{
 		for (List.Reset(); !List.IsEnd(); List.GoNext())
 		{
-			//List.GetCurrentVal()->Draw(gr);
+			List.GetCurrentVal()->Draw(gr);
 		}
 	}
 	virtual void Hide(Graphics ^gr)
@@ -31,6 +31,6 @@ public:
 	}
 	void Insert(TObject *p)
 	{
-		List.AddFirst(p);
+		List.InsFirst(p);
 	}
 };

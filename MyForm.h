@@ -4,6 +4,7 @@
 #include "TPoint.h"
 #include "TLine.h"
 #include "TChart.h"
+#include "TGroup.h"
 
 namespace Lab7_Graphics {
 
@@ -27,6 +28,7 @@ namespace Lab7_Graphics {
 			//
 			//TODO: Add the constructor code here
 			//
+			group = new TGroup;
 		}
 
 	protected:
@@ -50,6 +52,11 @@ namespace Lab7_Graphics {
 	private: System::Windows::Forms::RadioButton^  radio_circle;
 	public: Graphics^ g;
 	private: System::Windows::Forms::RadioButton^  radio_chart;
+	private: System::Windows::Forms::CheckBox^  checkBox1;
+	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::RadioButton^  radioButton1;
+
+
 	public:
 
 
@@ -77,6 +84,9 @@ namespace Lab7_Graphics {
 			this->radio_line = (gcnew System::Windows::Forms::RadioButton());
 			this->radio_circle = (gcnew System::Windows::Forms::RadioButton());
 			this->radio_chart = (gcnew System::Windows::Forms::RadioButton());
+			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
 			this->SuspendLayout();
 			// 
 			// label1
@@ -162,7 +172,7 @@ namespace Lab7_Graphics {
 			// 
 			this->radio_chart->AutoSize = true;
 			this->radio_chart->FlatStyle = System::Windows::Forms::FlatStyle::System;
-			this->radio_chart->Location = System::Drawing::Point(987, 86);
+			this->radio_chart->Location = System::Drawing::Point(987, 123);
 			this->radio_chart->Name = L"radio_chart";
 			this->radio_chart->Size = System::Drawing::Size(56, 18);
 			this->radio_chart->TabIndex = 7;
@@ -170,12 +180,46 @@ namespace Lab7_Graphics {
 			this->radio_chart->Text = L"Chart";
 			this->radio_chart->UseVisualStyleBackColor = true;
 			// 
+			// checkBox1
+			// 
+			this->checkBox1->AutoSize = true;
+			this->checkBox1->Location = System::Drawing::Point(987, 199);
+			this->checkBox1->Name = L"checkBox1";
+			this->checkBox1->Size = System::Drawing::Size(55, 17);
+			this->checkBox1->TabIndex = 8;
+			this->checkBox1->Text = L"Group";
+			this->checkBox1->UseVisualStyleBackColor = true;
+			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(987, 222);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(75, 23);
+			this->button1->TabIndex = 9;
+			this->button1->Text = L"Move";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
+			// 
+			// radioButton1
+			// 
+			this->radioButton1->AutoSize = true;
+			this->radioButton1->Location = System::Drawing::Point(987, 86);
+			this->radioButton1->Name = L"radioButton1";
+			this->radioButton1->Size = System::Drawing::Size(74, 17);
+			this->radioButton1->TabIndex = 10;
+			this->radioButton1->TabStop = true;
+			this->radioButton1->Text = L"Rectangle";
+			this->radioButton1->UseVisualStyleBackColor = true;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::White;
 			this->ClientSize = System::Drawing::Size(1084, 618);
+			this->Controls->Add(this->radioButton1);
+			this->Controls->Add(this->button1);
+			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->radio_chart);
 			this->Controls->Add(this->radio_circle);
 			this->Controls->Add(this->radio_line);
@@ -204,6 +248,9 @@ namespace Lab7_Graphics {
 				int y_prev = -1;
 				bool line_is_drawing = false;
 				TChart* chart;
+				TGroup* group;
+				TLine* pLine;
+				
 
 #pragma endregion
 	private: System::Void MyForm_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) 
@@ -230,14 +277,18 @@ private: System::Void MyForm_MouseDown(System::Object^  sender, System::Windows:
 
 			 if (this->radio_point->Checked)
 			 {
-				 TPoint Point(e->X, e->Y);
-				 Point.Draw(g);
+				 TPoint NPoint(e->X, e->Y);
+				 if (this->checkBox1->Checked)
+					 group->Insert(&NPoint);
+				 NPoint.Draw(g);
 			 }
 
 			 if (this->radio_circle->Checked)
 			 {
-				 TCircle Circle(e->X, e->Y, 15);
-				 Circle.Draw(g);
+				 TCircle NCircle(e->X, e->Y, 15);
+				 if (this->checkBox1->Checked)
+					 group->Insert(&NCircle);
+				 NCircle.Draw(g);
 			 }
 			 if (this->radio_line->Checked)
 			 {
@@ -249,8 +300,14 @@ private: System::Void MyForm_MouseDown(System::Object^  sender, System::Windows:
 				 }
 				 else
 				 {
-					 TLine Line(x_1, y_1, e->X, e->Y);
-					 Line.Draw(g);
+					 
+					 pLine = new TLine(x_1, y_1, e->X, e->Y);
+
+					 if (this->checkBox1->Checked)
+					 {
+						 group->Insert(pLine);
+					 }
+					 pLine->Draw(g);
 					 line_is_drawing = false;
 				 }
 					
@@ -274,5 +331,9 @@ private: System::Void MyForm_MouseDown(System::Object^  sender, System::Windows:
 				 }
 
 	}
+
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 group->Move(g, 5, 5);
+}
 };
 }
