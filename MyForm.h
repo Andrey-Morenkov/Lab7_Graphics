@@ -250,6 +250,8 @@ namespace Lab7_Graphics {
 				TChart* chart;
 				TGroup* group;
 				TLine* pLine;
+				TCircle* pCircle;
+				TPoint* pPoint;
 				
 
 #pragma endregion
@@ -277,18 +279,21 @@ private: System::Void MyForm_MouseDown(System::Object^  sender, System::Windows:
 
 			 if (this->radio_point->Checked)
 			 {
-				 TPoint NPoint(e->X, e->Y);
+				 //TPoint NPoint(e->X, e->Y);
+				 pPoint = new TPoint(e->X, e->Y);
 				 if (this->checkBox1->Checked)
-					 group->Insert(&NPoint);
-				 NPoint.Draw(g);
+					 group->Insert(pPoint);
+				 pPoint->Draw(g);
 			 }
 
 			 if (this->radio_circle->Checked)
 			 {
-				 TCircle NCircle(e->X, e->Y, 15);
+				 //TCircle NCircle(e->X, e->Y, 15);
+				 pCircle = new TCircle(e->X, e->Y, 15);
+
 				 if (this->checkBox1->Checked)
-					 group->Insert(&NCircle);
-				 NCircle.Draw(g);
+					 group->Insert(pCircle);
+				 pCircle->Draw(g);
 			 }
 			 if (this->radio_line->Checked)
 			 {

@@ -45,7 +45,7 @@ public:
 	{}
 	virtual void Move(Graphics ^g, int dx, int dy)
 	{}
-	virtual void Draw(Graphics^ gr)
+	virtual void Draw(Graphics^ g)
 	{
 		TChartLine CurrLine;
 		TStack<TChartLine> st;
@@ -68,7 +68,7 @@ public:
 				if (q != NULL)
 				{
 					CurrLine.pFirstPoint = q;
-					//q->Draw(Lab7_Graphics::MyForm::g);
+					q->Draw(g);
 					// отрисовка точки
 				}
 				else
@@ -85,7 +85,7 @@ public:
 				if (q != NULL)
 				{
 					CurrLine.pLastPoint = q;
-					//q->Draw(Lab7_Graphics::MyForm::g);                           // отрисовка точки
+					q->Draw(g);                           // отрисовка точки
 				}
 				else
 				{
@@ -99,7 +99,7 @@ public:
 
 			if ((CurrLine.pFirstPoint != NULL) && (CurrLine.pLastPoint != NULL))
 			{
-				gr->DrawLine(Pens::Black, CurrLine.pFirstPoint->GetX(), CurrLine.pFirstPoint->GetY(), CurrLine.pLastPoint->GetX(), CurrLine.pLastPoint->GetY());
+				g->DrawLine(Pens::Black, CurrLine.pFirstPoint->GetX(), CurrLine.pFirstPoint->GetY(), CurrLine.pLastPoint->GetX(), CurrLine.pLastPoint->GetY());
 
 
 				if (!st.IsEmpty())
