@@ -33,3 +33,6 @@ Class Lab7_Graphics.MyForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldIni
     TLine* pLine : Public
     TCircle* pCircle : Public
     TPoint* pPoint : Public
+    TObject* point_chart : Public
+    TRectangle* pRectangle : Public
+    TObject* point_last : Public

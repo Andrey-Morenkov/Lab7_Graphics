@@ -5,6 +5,7 @@
 #include "TLine.h"
 #include "TChart.h"
 #include "TGroup.h"
+#include "TRectangle.h"
 
 namespace Lab7_Graphics {
 
@@ -29,6 +30,7 @@ namespace Lab7_Graphics {
 			//TODO: Add the constructor code here
 			//
 			group = new TGroup;
+			chart = new TChart;
 		}
 
 	protected:
@@ -54,7 +56,8 @@ namespace Lab7_Graphics {
 	private: System::Windows::Forms::RadioButton^  radio_chart;
 	private: System::Windows::Forms::CheckBox^  checkBox1;
 	private: System::Windows::Forms::Button^  button1;
-	private: System::Windows::Forms::RadioButton^  radioButton1;
+	private: System::Windows::Forms::RadioButton^  radio_rectangle;
+
 
 
 	public:
@@ -86,7 +89,7 @@ namespace Lab7_Graphics {
 			this->radio_chart = (gcnew System::Windows::Forms::RadioButton());
 			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
 			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
+			this->radio_rectangle = (gcnew System::Windows::Forms::RadioButton());
 			this->SuspendLayout();
 			// 
 			// label1
@@ -200,16 +203,16 @@ namespace Lab7_Graphics {
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
 			// 
-			// radioButton1
+			// radio_rectangle
 			// 
-			this->radioButton1->AutoSize = true;
-			this->radioButton1->Location = System::Drawing::Point(987, 86);
-			this->radioButton1->Name = L"radioButton1";
-			this->radioButton1->Size = System::Drawing::Size(74, 17);
-			this->radioButton1->TabIndex = 10;
-			this->radioButton1->TabStop = true;
-			this->radioButton1->Text = L"Rectangle";
-			this->radioButton1->UseVisualStyleBackColor = true;
+			this->radio_rectangle->AutoSize = true;
+			this->radio_rectangle->Location = System::Drawing::Point(987, 86);
+			this->radio_rectangle->Name = L"radio_rectangle";
+			this->radio_rectangle->Size = System::Drawing::Size(74, 17);
+			this->radio_rectangle->TabIndex = 10;
+			this->radio_rectangle->TabStop = true;
+			this->radio_rectangle->Text = L"Rectangle";
+			this->radio_rectangle->UseVisualStyleBackColor = true;
 			// 
 			// MyForm
 			// 
@@ -217,7 +220,7 @@ namespace Lab7_Graphics {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::White;
 			this->ClientSize = System::Drawing::Size(1084, 618);
-			this->Controls->Add(this->radioButton1);
+			this->Controls->Add(this->radio_rectangle);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->radio_chart);
@@ -247,11 +250,14 @@ namespace Lab7_Graphics {
 				int x_prev = -1;
 				int y_prev = -1;
 				bool line_is_drawing = false;
-				TChart* chart;
-				TGroup* group;
-				TLine* pLine;
-				TCircle* pCircle;
-				TPoint* pPoint;
+				TChart*     chart;
+				TGroup*     group;
+				TLine*      pLine;
+				TCircle*    pCircle;
+				TPoint*     pPoint;
+				TObject*    point_chart;
+				TRectangle* pRectangle;
+				TObject*    point_last;
 				
 
 #pragma endregion
@@ -319,17 +325,26 @@ private: System::Void MyForm_MouseDown(System::Object^  sender, System::Windows:
 			 }
 			 if (this->radio_chart->Checked)
 			 {
-				 TObject* point_1;
-				 point_1 = new TPoint(e->X, e->Y);
-				 chart = new TChart();
-				 chart->SetFirst(point_1);
+				 point_chart = new TPoint(e->X, e->Y);
+				 chart->SetFirst(point_chart);
 				 chart->Draw(g);
+			 }
+
+			 if (this ->radio_rectangle->Checked)
+			 {
+				 int r = 80;
+				 int h = 40;
+				 pRectangle = new TRectangle(e->X, e->Y,r,h);
+				 if (this->checkBox1->Checked)
+				 {
+					 group->Insert(pRectangle);
+				 }
+				 pRectangle->Draw(g);
 			 }
     }
 	private: System::Void MyForm_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 				 if (this->radio_chart->Checked)
 				 {
-					 TObject* point_last;
 					 point_last = new TPoint(e->X, e->Y);
 					 chart->SetLast(point_last);
 					 chart->Draw(g);
@@ -338,7 +353,7 @@ private: System::Void MyForm_MouseDown(System::Object^  sender, System::Windows:
 	}
 
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			 group->Move(g, 5, 5);
+			 group->Move(g, 5, 0);
 }
 };
 }
