@@ -3,6 +3,7 @@
 #include "TObject.h"
 #include "TPoint.h"
 #include "TStack.h"
+#include <math.h>
 
 #define pfp pFirstPoint;
 #define plp pLastPoint;
@@ -45,79 +46,87 @@ public:
 	{}
 	virtual void Move(Graphics ^g, int dx, int dy)
 	{}
+
+	TObject* DrawRec(Graphics^ gr, TObject* t)
+	{
+
+		TChart* CurrLine;
+		TPoint *pFp, *pLp;
+		if (dynamic_cast<TPoint*>(t) != NULL)
+			return t;
+		else
+		{
+			CurrLine = dynamic_cast<TChart*>(t);
+			pFp = dynamic_cast<TPoint*>(DrawRec(gr, CurrLine->GetFirst()));
+			pLp = dynamic_cast<TPoint*>(DrawRec(gr, CurrLine->GetLast()));
+			if (pFp&&pLp)
+			{
+				gr->DrawLine(Pens::Black, pFp->GetX(), pFp->GetY(), pLp->GetX(), pLp->GetY());
+			}
+		}
+	}
+
 	virtual void Draw(Graphics^ g)
 	{
-		TChartLine CurrLine;
-		TStack<TChartLine> st;
-		TObject* t;
-		TPoint* q;
+		
+	}
 
-		st.Clear();
-		CurrLine.pLine = this;
-		CurrLine.pFirstPoint = NULL;
-		CurrLine.pLastPoint = NULL;
-		st.Push(CurrLine);
-
-		while (!st.IsEmpty())
+	void AddClosestLine(int x1, int y1, int x2, int y2)
+	{
+		if (begin == NULL && end == NULL)
 		{
-			CurrLine = st.Pop();
-			while (CurrLine.pFirstPoint == NULL)
+			begin = new TPoint(x1, y1);
+			end = new TPoint(x2, y2);
+		}
+		else
+		{
+			TStack<TObject*> stack1;
+			TStack<TPoint*> stack2;
+			TChart *curr = this;
+			TObject *min1, *min2;
+			TChart *min;
+			int xmin, ymin;
+			double difference = 0;
+			double differencetmp = 0;
+
+
+			stack1.Push(curr->begin);
+			stack1.Push(curr->end);
+			while (true)
 			{
-				t = this->GetFirst();
-				q = dynamic_cast<TPoint*>(t);
-				if (q != NULL)
+				if (dynamic_cast<TPoint*>(stack1.Top()) != NULL)
 				{
-					CurrLine.pFirstPoint = q;
-					q->Draw(g);
-					// отрисовка точки
+					stack2.Push(dynamic_cast<TPoint*>(stack1.Pop()));
 				}
 				else
 				{
-					st.Push(CurrLine);
-					CurrLine.pLine = dynamic_cast<TChart*>(t);
+					curr = dynamic_cast<TChart*>(stack1.Pop());
+					stack1.Push(curr->begin);
+					stack1.Push(curr->end);
 				}
-			}
+				if (stack1.IsEmpty())
+					break;
+			}//в stack2 лежат все точки с которыми надо сравнить
 
-			if (CurrLine.pLastPoint == NULL)
+			min1 = stack2.Pop();
+			int tmp = (dynamic_cast<TPoint*>(min1)->GetX() - x1)*(dynamic_cast<TPoint*>(min1)->GetX() - x1) + (dynamic_cast<TPoint*>(min1)->GetY() - y1)*(dynamic_cast<TPoint*>(min1)->GetY() - y1);
+			difference = sqrt((float)tmp);
+			while (!stack2.IsEmpty())
 			{
-				t = this->GetLast();
-				q = dynamic_cast<TPoint*>(t);
-				if (q != NULL)
+				min2 = stack2.Pop();
+				if ((differencetmp = sqrt((float)((dynamic_cast<TPoint*>(min2)->GetX() - x1)*(dynamic_cast<TPoint*>(min2)->GetX() - x1) +
+					(dynamic_cast<TPoint*>(min2)->GetY() - y1)*(dynamic_cast<TPoint*>(min2)->GetY() - y1)))) < difference)
 				{
-					CurrLine.pLastPoint = q;
-					q->Draw(g);                           // отрисовка точки
+					min1 = min2;
+					difference = differencetmp;
 				}
-				else
-				{
-					st.Push(CurrLine);
-					CurrLine.pLine = dynamic_cast<TChart*>(t);
-					CurrLine.pFirstPoint = NULL;
-					st.Push(CurrLine);
-				}
-			}
-
-
-			if ((CurrLine.pFirstPoint != NULL) && (CurrLine.pLastPoint != NULL))
-			{
-				g->DrawLine(Pens::Black, CurrLine.pFirstPoint->GetX(), CurrLine.pFirstPoint->GetY(), CurrLine.pLastPoint->GetX(), CurrLine.pLastPoint->GetY());
-
-
-				if (!st.IsEmpty())
-				{
-					q = CurrLine.pLastPoint;
-					CurrLine = st.Pop();
-
-					if (CurrLine.pFirstPoint == NULL)
-					{
-						CurrLine.pFirstPoint = q;
-					}
-					else
-					{
-						CurrLine.pLastPoint = q;
-					}
-					st.Push(CurrLine);
-				}
-			}
+			}//теперь в min1 лежит точка с наименьшим отклонением
+			xmin = dynamic_cast<TPoint*>(min1)->GetX();
+			ymin = dynamic_cast<TPoint*>(min1)->GetY();
+			delete min1;
+			min1 = new TChart();
+			dynamic_cast<TChart*>(min1)->begin = new TPoint(xmin, ymin);
+			dynamic_cast<TChart*>(min1)->end = new TPoint(x2, y2);
 		}
 	}
 				
